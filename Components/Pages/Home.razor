@@ -1,0 +1,66 @@
+﻿@page "/"
+
+<PageTitle>Todo App</PageTitle>
+<div class="todo-page">
+    <header class="todo-header">
+        <h1>ToDo App</h1>
+    </header>
+    
+    <div class="todo-create">
+        <div class="todo-create-input">
+            <label>New Todo:</label>
+            <input type="text" placeholder="Todo Title"/>
+        </div>
+
+        <div class="todo-add-button">
+            <button>Add ToDo</button>
+        </div>
+    </div>
+    
+
+    <div class="todo-controls">
+        <div class="todo-status">
+            <div>
+                <label>Status:</label>
+                <select>
+                    <option>All</option>
+                    <option>Open</option>
+                    <option>In Progress</option>
+                    <option>Done</option>
+                </select>
+            </div>
+        </div>
+        <div class="todo-sort">
+            <div>
+                <label>Sort:</label>
+                <select>
+                    <option>Date Deadline</option>
+                    <option>Title</option>
+                    <option>Status</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="todo-list">
+        <div class="todo-item">
+            <div class="todo-check">
+                <input type="checkbox"/>
+                <span>Einlesen und Tutorials anschauen</span>
+            </div>
+            <div class="todo-details">
+                    <button>Open</button>
+            </div>
+        </div>
+    
+         <div class="todo-item">
+            <div class="todo-check">
+                <input type="checkbox"/>
+                <span>Einlesen und Tutorials anschauen</span>
+            </div>
+            <div class="todo-details">
+                    <button>Open</button>
+            </div>
+        </div>
+    </div>
+</div>
