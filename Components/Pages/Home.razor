@@ -1,6 +1,10 @@
 ﻿@page "/"
+@using TodoApp.Models
+@using TodoApp.Services
+@inject TodoService TodoService
 
 <PageTitle>Todo App</PageTitle>
+
 <div class="todo-page">
     <header class="todo-header">
         <h1>ToDo App</h1>
@@ -9,11 +13,14 @@
     <div class="todo-create">
         <div class="todo-create-input">
             <label>New Todo:</label>
-            <input type="text" placeholder="Todo Title"/>
+            <input type="text"
+            placeholder="Todo Title"
+            @bind="newTitle"
+            @bind:event="oninput" />
         </div>
 
         <div class="todo-add-button">
-            <button>Add ToDo</button>
+            <button @onclick="AddTodo">Add ToDo</button>
         </div>
     </div>
     
@@ -43,24 +50,38 @@
     </div>
 
     <div class="todo-list">
-        <div class="todo-item">
-            <div class="todo-check">
-                <input type="checkbox"/>
-                <span>Einlesen und Tutorials anschauen</span>
-            </div>
-            <div class="todo-details">
+        @foreach (TodoItem todo in TodoService.Todos)
+        {
+            <div class="todo-item" @key="todo.Id">
+                <div class="todo-check">    
+                    <input type="checkbox"/>
+                    <span>@todo.Title</span>
+                </div>
+
+                <div class="todo-details">
                     <button>Open</button>
+                </div>
             </div>
-        </div>
-    
-         <div class="todo-item">
-            <div class="todo-check">
-                <input type="checkbox"/>
-                <span>Einlesen und Tutorials anschauen</span>
-            </div>
-            <div class="todo-details">
-                    <button>Open</button>
-            </div>
-        </div>
+        }
     </div>
+       
 </div>
+
+@code {
+    private string newTitle ="";
+    private void AddTodo() {
+        if (string.IsNullOrWhiteSpace(newTitle)) {
+            return;
+        }
+
+        TodoService.Add 
+        (
+            newTitle.Trim(),
+            "",
+            TodoStatus.Open,
+            null
+        );
+
+        newTitle ="";
+    }
+}

@@ -1,0 +1,52 @@
+@page "/details/edit"
+
+<PageTitle>Edit</PageTitle>
+<div class="edit-page">
+    <header class="todo-header">
+        <h1>ToDo App</h1>
+    </header>
+
+    <div class="edit-title">
+        <input type="text" placeholder="Todo Title"/>
+    </div>
+
+    <div class="parameters">
+        <div class="status">
+            <label>Status:</label>
+            <select>
+                <option>Open</option>
+                <option>In Progress</option>
+                <option>Done?</option>
+            </select>
+        </div>
+
+        <div class="deadline">
+            <label>Deadline:</label>
+            <input type="date" placeholder="actual date*"/> @*input type date, placeholder/default actual date*@
+        </div>
+
+    </div>
+
+    <div class="edit-text-box">
+        <div class="edit-text">
+            <textarea placeholder="Describe your ToDo"></textarea>
+        </div>
+    </div>
+
+    <div class="buttons-group">
+        <div class="button-return">
+            <button>Return</button>
+        </div>
+
+        <div class="buttons-right">
+            <div class="button-edit">
+                <button>Edit</button>
+            </div>
+
+            <div class="button-delete">
+                <button>Delete</button>
+            </div>
+        </div>
+    </div>
+
+</div>
