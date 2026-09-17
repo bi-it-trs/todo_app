@@ -1,52 +1,143 @@
-@page "/details/edit"
+@page "/details/edit/{Id:int?}"
+
+@using TodoApp.Models
+@using TodoApp.Services
+
+@inject TodoService TodoService
+@inject NavigationManager Navigation
 
 <PageTitle>Edit</PageTitle>
 <div class="edit-page">
     <header class="todo-header">
         <h1>ToDo App</h1>
     </header>
-
+    @if (todo is null)
+    {
+        <p style="color:white;">Todo nicht gefunden</p>
+    }
+    else
+    {
     <div class="edit-title">
-        <input type="text" placeholder="Todo Title"/>
+        <input type="text" placeholder="Todo Title" @bind="todo.Title"/>
     </div>
 
     <div class="parameters">
         <div class="status">
             <label>Status:</label>
-            <select>
-                <option>Open</option>
-                <option>In Progress</option>
-                <option>Done?</option>
+            <select @bind="todo.Status">
+                <option value="Open">Open</option>
+                <option value="InProgress">In Progress</option>
+                <option value="Done">Done</option>
             </select>
         </div>
 
         <div class="deadline">
             <label>Deadline:</label>
-            <input type="date" placeholder="actual date*"/> @*input type date, placeholder/default actual date*@
+            <input type="date" @bind="todo.Deadline"/> @*input type date, placeholder/default actual date*@
         </div>
 
     </div>
 
     <div class="edit-text-box">
         <div class="edit-text">
-            <textarea placeholder="Describe your ToDo"></textarea>
+            <textarea placeholder="Describe your ToDo" @bind="todo.Description"></textarea>
         </div>
     </div>
 
     <div class="buttons-group">
         <div class="button-return">
-            <button>Return</button>
+            <button @onclick="GoBack">Return</button>
         </div>
 
         <div class="buttons-right">
-            <div class="button-edit">
-                <button>Edit</button>
+            <div class="button-cancel">
+                <button @onclick="Cancel">Cancel</button>
+            </div>
+            <div class="button-ok">
+                <button @onclick="SaveChanges">OK</button>
             </div>
 
-            <div class="button-delete">
-                <button>Delete</button>
-            </div>
         </div>
     </div>
 
+    }
 </div>
+
+@code {
+
+    [Parameter]
+    public int? Id { get; set; }
+
+    [SupplyParameterFromQuery(Name = "Title")]
+    public string? InitialTitle { get; set; }
+
+    private TodoItem? todo;
+
+    private bool IsNew => Id is null;
+
+    protected override void OnParametersSet()
+    {
+        if (IsNew)
+        {
+            todo = new TodoItem
+            {
+                Title = InitialTitle ?? "",
+                Status = TodoStatus.Open
+            };
+
+            return;
+        }
+
+        TodoItem? original = TodoService.GetById(Id.Value);
+
+        if (original is null)
+        {
+            todo = null;
+            return;
+        }
+
+        todo = new TodoItem
+        {
+            Id = original.Id,
+            Title = original.Title,
+            Description = original.Description,
+            Status = original.Status,
+            Deadline = original.Deadline
+        };
+    }
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/");
+    }
+    private void Cancel()
+    {
+        GoBack();
+    }
+
+    private void SaveChanges()
+{
+    if (todo is null || string.IsNullOrWhiteSpace(todo.Title))
+    {
+        return;
+    }
+
+    todo.Title = todo.Title.Trim();
+
+    if (IsNew)
+    {
+        TodoService.Add(
+            todo.Title,
+            todo.Description,
+            todo.Status,
+            todo.Deadline);
+    }
+    else
+    {
+        TodoService.Update(todo);
+    }
+
+    GoBack();
+}
+
+
+}

@@ -2,6 +2,7 @@
 @using TodoApp.Models
 @using TodoApp.Services
 @inject TodoService TodoService
+@inject NavigationManager Navigation
 
 <PageTitle>Todo App</PageTitle>
 
@@ -59,7 +60,7 @@
                 </div>
 
                 <div class="todo-details">
-                    <button>Open</button>
+                    <button @onclick="() => OpenTodo(todo.Id)">Open</button>
                 </div>
             </div>
         }
@@ -67,21 +68,23 @@
        
 </div>
 
-@code {
-    private string newTitle ="";
-    private void AddTodo() {
-        if (string.IsNullOrWhiteSpace(newTitle)) {
+@code { // Code-behind for the Home page, handling the creation of new todos and interaction with the TodoService.
+    private void EditTodo(int todoId)
+    {
+        Navigation.NavigateTo($"/details/edit/{todoId}");
+    }
+    private string newTitle =""; // Holds the title of the new todo item being created.
+    private void AddTodo() { // Adds a new todo item using the TodoService.
+        if (string.IsNullOrWhiteSpace(newTitle)) { // Prevent adding empty todos.
             return;
         }
 
-        TodoService.Add 
-        (
-            newTitle.Trim(),
-            "",
-            TodoStatus.Open,
-            null
-        );
+        string title = Uri.EscapeDataString(newTitle.Trim());
+        Navigation.NavigateTo($"/details/edit?title={title}");
+    }
 
-        newTitle ="";
+    private void OpenTodo(int todoId)
+    {
+        Navigation.NavigateTo($"/details/{todoId}");
     }
 }

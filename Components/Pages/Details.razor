@@ -1,4 +1,10 @@
-@page "/details"
+@page "/details/{Id:int}"
+
+@using TodoApp.Models
+@using TodoApp.Services
+
+@inject TodoService TodoService
+@inject NavigationManager Navigation
 
 <PageTitle>Details</PageTitle>
 <div class="detail-page">
@@ -7,86 +13,93 @@
     </header>
 
     <div class="todo-title">
-        <h2>Einlesen und Tutorials anschauen</h2>
+        <h2>@todo?.Title</h2>
     </div>
     
-    <div class="todo-info">
+    @if (todo is null)
+    {
+        <p style="color:white;">Todo item not found.</p>
+    }
+    else
+    {
+        <div class="todo-details">
+            <div class="todo-info">
 
-        <div class="todo-status">
-            <div class="status-indicator">
+                <div class="todo-status">
+                    <div class="status-indicator">
+                    </div>
+                        <h6>Status:</h6>
+                    <div class="status-value">
+                        <h6>@todo.Status</h6>
+                    </div>
+                </div>
+
+                <div class="todo-deadline">
+                    <div class="deadline-indicator">
+                        <h6>
+                            Deadline:
+                        </h6>
+                    </div>
+                    <div class="deadline-value">
+                        <h6>
+                            @(todo.Deadline?.ToString("yyyy-MM-dd") ?? "Kein Datum")
+                        </h6>
+                    </div>
+                </div>
+
             </div>
-                <h6>Status:</h6>
-            <div class="status-value">
-                <h6>Done</h6>
-            </div>
-        </div>
-
-        <div class="todo-deadline">
-            <div class="deadline-indicator">
-                <h6>
-                    Deadline:
-                </h6>
-            </div>
-            <div class="deadline-value">
-                <h6>
-                    2026-08-29
-                </h6>
-            </div>
-        </div>
-
-    </div>
-    
-    <div class="todo-description">
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-        <p>beispieltext</p>
-
-    </div>
-
-    <div class="buttons-group">
-        <div class="button-return">
-            <button>Return</button>
-        </div>
-
-        <div class="buttons-right">
-            <div class="button-edit">
-                <button>Edit</button>
+            
+            <div class="todo-description">
+                <p>@todo.Description</p>
             </div>
 
-            <div class="button-delete">
-                <button>Delete</button>
+            <div class="buttons-group">
+                <div class="button-return">
+                    <button @onclick="GoBack">Return</button>
+                </div>
+
+                <div class="buttons-right">
+                    <div class="button-delete">
+                        <button @onclick="DeleteTodo">Delete</button>
+                    </div>
+                    <div class="button-edit" @key="todo.Id">
+                        <button @onclick="() => EditTodo(todo.Id)">Edit</button>
+                    </div>
+
+                </div>
             </div>
         </div>
-    </div>
+    }
+
+
 
 
 </div>
+
+@code {
+    [Parameter]
+    public int Id { get; set;}
+
+    private TodoItem? todo;
+
+    protected override void OnParametersSet()
+    {
+        todo = TodoService.GetById(Id);
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/");
+    }
+        private void EditTodo(int todoId)
+    {
+        Navigation.NavigateTo($"/details/edit/{todoId}");
+    }
+
+    private void DeleteTodo()
+    {
+        TodoService.Delete(Id);
+        GoBack();
+    }
+
+}
