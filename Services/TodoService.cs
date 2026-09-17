@@ -54,4 +54,35 @@ public class TodoService
             Todos.Remove(todo);
         }
     }
+    public IEnumerable<TodoItem> GetTodos(
+        TodoStatus? status,
+        TodoSort sort)
+    {
+        IEnumerable<TodoItem> result = Todos;
+
+        if (status is not null)
+        {
+            result = result.Where(todo => todo.Status == status.Value);
+        }
+
+        switch (sort)
+        {
+            case TodoSort.Title:
+                result = result.OrderBy(todo => todo.Title);
+                break;
+
+            case TodoSort.Status:
+                result = result.OrderBy(todo => todo.Status);
+                break;
+
+            case TodoSort.Deadline:
+                result = result
+                    .OrderBy(todo => todo.Deadline is null)
+                    .ThenBy(todo => todo.Deadline);
+                break;
+        }
+
+        return result;
+    }
+    
 }

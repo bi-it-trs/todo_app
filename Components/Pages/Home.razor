@@ -29,29 +29,33 @@
     <div class="todo-controls">
         <div class="todo-status">
             <div>
-                <label>Status:</label>
-                <select>
-                    <option>All</option>
-                    <option>Open</option>
-                    <option>In Progress</option>
-                    <option>Done</option>
+                <label>Status:</label> @* Filter todos by status *@
+                <select @bind="selectedStatus">
+                    <option value="">All</option>
+                    <option value="@TodoStatus.Open">Open</option>
+                    <option value="@TodoStatus.InProgress">In Progress</option>
+                    <option value="@TodoStatus.Done">Done</option>
                 </select>
             </div>
         </div>
         <div class="todo-sort">
             <div>
-                <label>Sort:</label>
-                <select>
-                    <option>Date Deadline</option>
-                    <option>Title</option>
-                    <option>Status</option>
+                <label>Sort:</label> @* Sort todos *@
+                <select @bind="selectedSort">
+                    <option value="@TodoSort.Deadline">Date Deadline</option>
+                    <option value="@TodoSort.Title">Title</option>
+                    <option value="@TodoSort.Status">Status</option>
                 </select>
             </div>
         </div>
     </div>
+        <p style="color: white;">
+    Statusfilter: @(selectedStatus?.ToString() ?? "All")
+    | Sortierung: @selectedSort
+        </p>
 
     <div class="todo-list">
-        @foreach (TodoItem todo in TodoService.Todos)
+        @foreach (TodoItem todo in TodoService.GetTodos(selectedStatus, selectedSort))
         {
             <div class="todo-item" @key="todo.Id">
                 <div class="todo-check">    
@@ -87,4 +91,7 @@
     {
         Navigation.NavigateTo($"/details/{todoId}");
     }
+
+    private TodoStatus? selectedStatus = null;
+    private TodoSort selectedSort = TodoSort.Deadline;
 }
