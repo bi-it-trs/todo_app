@@ -82,9 +82,9 @@
 
     private TodoItem? todo;
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        todo = TodoService.GetById(Id);
+        todo = await TodoService.GetByIdAsync(Id);
     }
 
     private void GoBack()

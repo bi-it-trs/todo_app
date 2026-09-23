@@ -10,7 +10,10 @@
     <header class="todo-header">
         <h1>ToDo App</h1>
     </header>
-    
+    <p style="color: white;">
+        Einträge in MariaDB:
+        @(databaseCount?.ToString() ?? "Wird geladen …")
+    </p>
     <div class="todo-create">
         <div class="todo-create-input">
             <label>New Todo:</label>
@@ -30,7 +33,8 @@
         <div class="todo-status">
             <div>
                 <label>Status:</label> @* Filter todos by status *@
-                <select @bind="selectedStatus">
+                <select @bind="selectedStatus"
+                @bind:after="LoadTodoAsync">
                     <option value="">All</option>
                     <option value="@TodoStatus.Open">Open</option>
                     <option value="@TodoStatus.InProgress">In Progress</option>
@@ -41,7 +45,8 @@
         <div class="todo-sort">
             <div>
                 <label>Sort:</label> @* Sort todos *@
-                <select @bind="selectedSort">
+                <select @bind="selectedSort"
+                @bind:after="LoadTodoAsync">
                     <option value="@TodoSort.Deadline">Date Deadline</option>
                     <option value="@TodoSort.Title">Title</option>
                     <option value="@TodoSort.Status">Status</option>
@@ -55,7 +60,7 @@
         </p>
 
     <div class="todo-list">
-        @foreach (TodoItem todo in TodoService.GetTodos(selectedStatus, selectedSort))
+        @foreach (TodoItem todo in todos)
         {
             <div class="todo-item" @key="todo.Id">
                 <div class="todo-check">    
@@ -94,4 +99,19 @@
 
     private TodoStatus? selectedStatus = null;
     private TodoSort selectedSort = TodoSort.Deadline;
+    private int? databaseCount;
+
+    private List<TodoItem> todos = new();
+    private async Task LoadTodoAsync()
+    {
+        todos = await TodoService.GetTodosAsync(
+            selectedStatus,
+            selectedSort);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        databaseCount = await TodoService.CountAsync();
+        await LoadTodoAsync();
+    }
 }

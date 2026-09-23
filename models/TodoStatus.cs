@@ -2,7 +2,7 @@ namespace TodoApp.Models;
 
 public enum TodoStatus
 {
-    Open,
-    InProgress,
-    Done
+    Open = 0,
+    InProgress = 1,
+    Done = 2
 }

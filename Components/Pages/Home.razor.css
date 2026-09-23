@@ -1,11 +1,19 @@
 .todo-page {
-    width:700px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 440px;
     min-height:840px;
     margin:20px auto;
     padding: 20px;
 
     background-color: #111;
     border-radius:12px;
+}
+
+.todo-page *,
+.todo-page *::before,
+.todo-page *::after {
+    box-sizing: border-box;
 }
 
 .todo-header {
@@ -32,15 +40,17 @@
 
 .todo-create {
     display: flex;
+    flex-wrap: wrap;
     gap: 16px;
-    
-    margin: 15px -10px 15px 15px;
+
+    margin: 15px 0;
 }
 
 .todo-create-input {
     flex: 1;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: stretch;
     gap: 10px;
     
     padding: 10px;
@@ -48,8 +58,8 @@
 }
 
 .todo-create-input input {
-    flex: 1;
     min-width: 0;
+    width: 100%;
     
     background-color: #DDEAFF;
     
@@ -58,16 +68,19 @@
 
 .todo-create-input,
 .todo-add-button button {
+    height: 100%;
     background-color: #a9c9f5;
     box-shadow: 3px 3px 6px 3px #4b5c76;
     
     font-size: 20px;
     font-weight: bold;
     font-variant: small-caps;
+    max-width: 100%;
 }
 
 .todo-add-button button {
     box-shadow: 3px 3px 6px 3px #4b5c76;
+    background-color: #9dafff;
     
     border-radius: 0px 20px 0px 0px;
     
@@ -81,12 +94,16 @@
 
 .todo-controls  {
     display: flex;
+    flex-wrap: wrap;
     gap: 16px;
 
     
 }
 
 .todo-controls select {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
     background-color: transparent;
     border: none;
     color: #000;
@@ -98,20 +115,22 @@
 .todo-status > div,
 .todo-sort > div {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: stretch;
     gap: 10px;
+    min-width: 0;
     
 }
 
 .todo-status,
 .todo-sort {
     flex: 1;
+    min-width: 0;
     padding: 10px;
     box-shadow: 3px 3px 6px 3px #4b5c76;
     background-color: #a9c9f5;
     padding: 10px;
-    margin: 10px -10px 10px 10px;
+    margin: 10px 0;
 }
 
 /* .todo-status,
@@ -130,8 +149,7 @@
     
     
     border-radius: 0px 20px 0px 0px;
-    margin-right: -3px;
-    
+    margin-right: 0;
 }
 
 .todo-controls label {
@@ -144,18 +162,20 @@
 .todo-list {
     max-height: 450px;
     overflow-y: auto;
-    padding-right: 15px;
+    padding-right: 0;
     margin-top: 30px;
 }
 
 .todo-item {
     display: flex;
     gap: 10px;
-    margin: 10px -5px 10px 20px;
+    margin: 10px 0;
+    min-width: 0;
 }
 
 .todo-check {
     flex: 1;
+    min-width: 0;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -182,7 +202,7 @@
 
 .todo-details button {
     padding: 15px;
-    background-color: #a9c9f5;
+    background-color: #9dafff;
     border: none;
     padding: 8px 20px;
     padding-left: 40px;
@@ -192,6 +212,94 @@
     font-variant: small-caps;
     margin-left: 5px;
     
+}
+
+@media (max-width: 480px) {
+    .todo-page {
+        margin: 10px auto;
+        padding: 16px;
+    }
+
+    .todo-header {
+        padding: 16px;
+        margin-right: 0;
+    }
+
+    .todo-header h1 {
+        padding-left: 0;
+        font-size: 36px;
+    }
+
+    .todo-create,
+    .todo-controls {
+        gap: 10px;
+    }
+
+    .todo-create-input,
+    .todo-status,
+    .todo-sort {
+        min-width: 0;
+    }
+
+    .todo-create-input {
+        flex: 1 1 0;
+        gap: 6px;
+        padding: 10px 8px;
+        font-size: 16px;
+    }
+
+    .todo-add-button {
+        flex: 0 0 auto;
+    }
+
+    .todo-add-button button {
+        height: 100%;
+        min-height: 52px;
+        margin-right: 0;
+        padding: 10px 14px;
+        font-size: 18px;
+        background-color: #9dafff;
+    }
+
+    .todo-status,
+    .todo-sort {
+        margin: 5px 0;
+    }
+
+    .todo-status > div,
+    .todo-sort > div {
+        gap: 6px;
+    }
+
+    .todo-controls select {
+        text-align: left;
+        padding-right: 0;
+    }
+
+    .todo-check span {
+        overflow-wrap: anywhere;
+    }
+
+    .todo-details button {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .button {
+    background-color: #9dafff;
+    }
+}
+
+@media (max-width: 360px) {
+    .todo-create-input,
+    .todo-add-button {
+        flex-basis: 100%;
+    }
+
+    .todo-add-button button {
+        width: 100%;
+    }
+
 }
 /* 
 

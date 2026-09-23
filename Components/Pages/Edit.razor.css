@@ -2,8 +2,9 @@
     display: flex;
     flex-direction: column;
 
-    width:700px;
-    height:840px;
+    width: 100%;
+    max-width: 440px;
+    min-height: 840px;
 
     box-sizing: border-box;
     margin:20px auto;
@@ -11,6 +12,12 @@
 
     background-color: #111;
     border-radius:12px;
+}
+
+.edit-page *,
+.edit-page *::before,
+.edit-page *::after {
+    box-sizing: border-box;
 }
 
 .todo-header {
@@ -47,9 +54,14 @@
     border-radius: 0 20px 0 20px;
 }
 
+.edit-title input {
+    width: 100%;
+    min-width: 0;
+}
+
 .parameters {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: 10px;
     margin: 20px 10px 30px 0px;
 }
@@ -57,11 +69,13 @@
 .status,
 .deadline {
     flex: 1;
+    min-width: 0;
+    flex-direction: column;
 }
 
 .status {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: 10px;
     background-color:#a9c9f5;
 
@@ -77,6 +91,9 @@
 }
 
 .status select {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
     background-color: transparent;
     border: none;
     color: #000;
@@ -88,7 +105,7 @@
 
 .deadline {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: 10px;
     background-color:#a9c9f5;
 
@@ -105,7 +122,9 @@
 .deadline input{
     text-align: right;
 
-    width: 140px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
     background-color: #DDEAFF;
     margin-left: auto;
     border-radius: 3px;
@@ -144,6 +163,8 @@
 
 .buttons-group {
     display:flex;
+    justify-content: space-between;
+    gap: 10px;
     flex-shrink: 0;
     margin-top: auto;
     margin-left: 20px;
@@ -153,14 +174,14 @@
 
 .buttons-group button {
     box-shadow: 3px 3px 6px 3px #4b5c76;
-    background-color: #a9c9f5;
+    background-color: #9dafff;
 
     
     
-    width: 115px;
+    width: 100%;
     height: 60px;
     box-sizing: border-box;
-    padding: 10px;
+    padding: 10px 6px;
     
     font-size: 20px;
     font-weight: bold;
@@ -169,11 +190,17 @@
 
 .buttons-right {
     display: flex;
+    margin-left: auto;
+    min-width: 0;
+    flex: 0 1 240px;
     gap: 10px;
+    
+
 }
 
 .button-return{
-    flex: 4;
+    flex: 0 1 115px;
+    min-width: 0;
 }
 .button-return button{
     border-radius: 0 20px 0 20px;
@@ -181,8 +208,14 @@
 }
 
 .button-cancel {
-    flex: 1;
+    flex: 1 1 0;
+    min-width: 0;
 
+}
+
+.button-ok {
+    flex: 1 1 0;
+    min-width: 0;
 }
 
 .button-cancel button {
@@ -192,4 +225,85 @@
 
 .button-ok button {
     border-radius: 0 20px 0 0;
+}
+
+@media (max-width: 480px) {
+    .edit-page {
+        min-height: calc(100vh - 20px);
+        margin: 10px auto;
+        padding: 16px;
+    }
+
+    .edit-page .todo-header {
+        margin-right: 0;
+        padding: 16px;
+    }
+
+    .edit-page .todo-header h1 {
+        padding-left: 0;
+        font-size: 36px;
+    }
+
+    .edit-title {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .edit-title input,
+    .status select,
+    .deadline input {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .parameters {
+        gap: 6px;
+        margin: 10px 0 20px;
+    }
+
+    .status,
+    .deadline {
+        min-width: 0;
+        margin-left: 0;
+        padding: 8px;
+        gap: 4px;
+        font-size: 14px;
+    }
+
+    .status select,
+    .deadline input {
+        width: 100%;
+        padding: 3px;
+        font-size: 14px;
+    }
+
+    .edit-text {
+        margin-left: 0;
+    }
+
+    .buttons-group {
+        gap: 10px;
+        margin-left: 0;
+    }
+
+    .button-return,
+    .buttons-right {
+        min-width: 0;
+    }
+
+    .buttons-right {
+        display: flex;
+        flex: 0 1 240px;
+    }
+
+    .buttons-group button {
+        font-size: 16px;
+    }
+
+    .button-cancel,
+    .button-ok {
+        flex: 1;
+        min-width: 0;
+    }
+
 }
