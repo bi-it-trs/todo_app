@@ -96,9 +96,9 @@
         Navigation.NavigateTo($"/details/edit/{todoId}");
     }
 
-    private void DeleteTodo()
+    private async Task DeleteTodo()
     {
-        TodoService.Delete(Id);
+        await TodoService.DeleteAsync(Id);
         GoBack();
     }
 

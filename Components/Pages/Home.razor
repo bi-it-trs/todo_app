@@ -3,6 +3,7 @@
 @using TodoApp.Services
 @inject TodoService TodoService
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
 
 <PageTitle>Todo App</PageTitle>
 
@@ -34,7 +35,7 @@
             <div>
                 <label>Status:</label> @* Filter todos by status *@
                 <select @bind="selectedStatus"
-                @bind:after="LoadTodoAsync">
+                @bind:after="SaveSelectionAsync">
                     <option value="">All</option>
                     <option value="@TodoStatus.Open">Open</option>
                     <option value="@TodoStatus.InProgress">In Progress</option>
@@ -46,7 +47,7 @@
             <div>
                 <label>Sort:</label> @* Sort todos *@
                 <select @bind="selectedSort"
-                @bind:after="LoadTodoAsync">
+                @bind:after="SaveSelectionAsync">
                     <option value="@TodoSort.Deadline">Date Deadline</option>
                     <option value="@TodoSort.Title">Title</option>
                     <option value="@TodoSort.Status">Status</option>
@@ -77,7 +78,8 @@
        
 </div>
 
-@code { // Code-behind for the Home page, handling the creation of new todos and interaction with the TodoService.
+@code {
+    // Code-behind for the Home page, handling the creation of new todos and interaction with the TodoService.
     private void EditTodo(int todoId)
     {
         Navigation.NavigateTo($"/details/edit/{todoId}");
@@ -109,9 +111,47 @@
             selectedSort);
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        string? savedStatus = await JS.InvokeAsync<string?>(
+            "localStorage.getItem", "todo.sort");
+        string? savedSort = await JS.InvokeAsync<string?>(
+            "localStorage.getItem", "todo.sort");
+
+        if (Enum.TryParse<TodoStatus>(savedStatus, out var status)
+            && Enum.IsDefined(status))
+        {
+            selectedStatus = status;
+        }
+
+        if (Enum.TryParse<TodoSort>(savedSort, out var sort)
+            && Enum.IsDefined(sort))
+        {
+            selectedSort = sort;
+        }
+
         databaseCount = await TodoService.CountAsync();
         await LoadTodoAsync();
+
+        StateHasChanged();
     }
+    private async Task SaveSelectionAsync()
+    {
+        await JS.InvokeVoidAsync(
+            "localStorage.setItem",
+            "todo.statusFilster",
+            selectedStatus?.ToString() ?? "");
+
+        await JS.InvokeVoidAsync(
+            "localStorage.setItem",
+            "todo.sort",
+            selectedSort.ToString());
+        await LoadTodoAsync();
+    }
+    
 }

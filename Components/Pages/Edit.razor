@@ -109,7 +109,7 @@
             Deadline = original.Deadline
         };
     }
-    private void GoBack()
+    private void GoBack() 
     {
         Navigation.NavigateTo("/");
     }
@@ -118,30 +118,26 @@
         GoBack();
     }
 
-    private void SaveChanges()
-{
-    if (todo is null || string.IsNullOrWhiteSpace(todo.Title))
+    private async Task SaveChanges()
     {
-        return;
+        if (todo is null || string.IsNullOrWhiteSpace(todo.Title))
+        {
+            return;
+        }
+
+        todo.Title = todo.Title.Trim();
+
+        if (IsNew)
+        {
+            await TodoService.AddAsync(todo);
+        }
+        else
+        {
+            await TodoService.UpdateAsync(todo);
+        }
+
+        GoBack();
     }
 
-    todo.Title = todo.Title.Trim();
-
-    if (IsNew)
-    {
-        TodoService.Add(
-            todo.Title,
-            todo.Description,
-            todo.Status,
-            todo.Deadline);
-    }
-    else
-    {
-        TodoService.Update(todo);
-    }
-
-    GoBack();
 }
 
-
-}

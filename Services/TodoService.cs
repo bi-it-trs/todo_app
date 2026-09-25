@@ -29,7 +29,14 @@ public class TodoService
                 break;
 
             case TodoSort.Status:
-                sql += " ORDER BY Status, Id";
+                sql += "\n" + """
+                    ORDER BY CASE Status
+                        WHEN 1 THEN 0
+                        WHEN 0 THEN 1
+                        WHEN 2 THEN 2
+                        ELSE 3
+                    END, Id
+                    """;
                 break;
 
             default:
@@ -90,55 +97,120 @@ public class TodoService
                 : null
         };
     }
-    private int nextId = 1; // Tracks the next available ID for new todo items.
-
-    public void Add // Adds a new todo item to the list.
-    (
-        string title,
-        string description,
-        TodoStatus status,
-        DateOnly? deadline
-    )
-    
-    {
-        TodoItem todo = new TodoItem // Create a new todo item with the provided details.
-        {
-            Id = nextId,
-            Title = title,
-            Description = description,
-            Status = status,
-            Deadline = deadline
-        };
-
-        nextId++;
-
-        Todos.Add(todo); // Add the newly created todo item to the list.
-    }
 
     public TodoItem? GetById(int id) // Retrieves a todo item by its ID, or null if not found.
     {
         return Todos.FirstOrDefault(todo => todo.Id == id); // Retrieves a todo item by its ID, or null if not found.
     }
 
-    public void Update(TodoItem todo) // Updates an existing todo item in the list.
+    private int nextId = 1; // Tracks the next available ID for new todo items.
+
+    public async Task AddAsync(TodoItem todo)
     {
-        var existingTodo = GetById(todo.Id);
-        if (existingTodo is not null)
+        const string sql = """
+            INSERT INTO Todos (Title, Description, Status, Deadline)
+            VALUES (@Title, @Description, @Status, @Deadline);
+            """;
+        
+        await using var connection =
+            new MySqlConnection(connectionString);
+
+        await connection.OpenAsync();
+
+        await connection.ExecuteAsync(sql, new
         {
-            existingTodo.Title = todo.Title;
-            existingTodo.Description = todo.Description;
-            existingTodo.Status = todo.Status;
-            existingTodo.Deadline = todo.Deadline;
-        }
+            Title = todo.Title,
+            Description = todo.Description,
+            Status = (int)todo.Status,
+            Deadline = todo.Deadline?.ToDateTime(TimeOnly.MinValue)
+        });
+    
     }
-    public void Delete(int id)
+
+    public async Task UpdateAsync(TodoItem todo)
     {
-        TodoItem? todo = GetById(id);
-        if (todo is not null)
+        const string sql = """
+            UPDATE Todos
+            SET Title = @Title,
+                Description = @Description,
+                Status = @Status,
+                Deadline = @Deadline
+            WHERE Id = @Id;
+            """;
+
+        await using var connection =
+            new MySqlConnection(connectionString);
+
+        await connection.OpenAsync();
+
+        await connection.ExecuteAsync(sql, new
         {
-            Todos.Remove(todo);
-        }
+            Id = todo.Id,
+            Title = todo.Title,
+            Description = todo.Description,
+            Status = (int)todo.Status,
+            Deadline = todo.Deadline?.ToDateTime(TimeOnly.MinValue)
+        });
     }
+
+    public async Task DeleteAsync(int id)
+    {
+        const string sql = """
+            DELETE FROM Todos
+            WHERE Id = @Id;
+            """;
+
+        await using var connection =
+            new MySqlConnection(connectionString);
+
+        await connection.OpenAsync();
+
+        await connection.ExecuteAsync(sql, new { Id = id });
+    }
+
+    // public void Add // localstorage add update and delete methods
+    // (
+    //     string title,
+    //     string description,
+    //     TodoStatus status,
+    //     DateOnly? deadline
+    // )
+    
+    // {
+    //     TodoItem todo = new TodoItem // Create a new todo item with the provided details.
+    //     {
+    //         Id = nextId,
+    //         Title = title,
+    //         Description = description,
+    //         Status = status,
+    //         Deadline = deadline
+    //     };
+
+    //     nextId++;
+
+    //     Todos.Add(todo); // Add the newly created todo item to the list.
+    // }
+
+
+    // public void Update(TodoItem todo) // Updates an existing todo item in the list.
+    // {
+    //     var existingTodo = GetById(todo.Id);
+    //     if (existingTodo is not null)
+    //     {
+    //         existingTodo.Title = todo.Title;
+    //         existingTodo.Description = todo.Description;
+    //         existingTodo.Status = todo.Status;
+    //         existingTodo.Deadline = todo.Deadline;
+    //     }
+    // }
+    // public void Delete(int id)
+    // {
+    //     TodoItem? todo = GetById(id);
+    //     if (todo is not null)
+    //     {
+    //         Todos.Remove(todo);
+    //     }
+    // }
     public IEnumerable<TodoItem> GetTodos(
         TodoStatus? status,
         TodoSort sort)
